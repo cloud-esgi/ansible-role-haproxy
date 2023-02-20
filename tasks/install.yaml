@@ -1,0 +1,35 @@
+- name: Create HAProxy config folder
+  ansible.builtin.file:
+    path: /etc/haproxy/conf.d/
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: "Install HAProxy"
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+    update_cache: true
+
+- name: "Stop HAProxy"
+  ansible.builtin.service:
+    name: haproxy
+    state: stopped
+
+- name: "Patch HAProxy service to load config in conf.d/ folder"
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/system/multi-user.target.wants/haproxy.service
+    regexp: 'Environment="CONFIG=/etc/haproxy/haproxy.cfg" "PIDFILE=/run/haproxy.pid" "EXTRAOPTS=-S /run/haproxy-master.sock"'
+    line: 'Environment="CONFIG=/etc/haproxy/haproxy.cfg -f /etc/haproxy/conf.d/" "PIDFILE=/run/haproxy.pid" "EXTRAOPTS=-S /run/haproxy-master.sock"'
+    state: present
+    owner: root
+    group: root
+    mode: "0644"
+  register: haproxy_service_patched
+
+- name: "Reload systemd"
+  ansible.builtin.command: systemctl daemon-reload
+  when: haproxy_service_patched.changed
+  register: systemd_reload
+  changed_when: systemd_reload.rc != 0

@@ -1,2 +1,16 @@
 ---
 # tasks file for haproxy
+- name: "Import install"
+  ansible.builtin.import_tasks: install.yaml
+  notify: "Restart HAProxy"
+  tags: install
+
+- name: "Push stats config"
+  ansible.builtin.template:
+    src: 00-stats.cfg.j2
+    dest: /etc/haproxy/conf.d/00-stats.cfg
+    owner: root
+    group: root
+    mode: "0644"
+  notify: "Restart HAProxy"
+  tags: config
