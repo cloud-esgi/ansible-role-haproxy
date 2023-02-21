@@ -6,3 +6,12 @@ ha_keepalived_interface: "{{ ansible_default_ipv4.interface }}"
 ha_keepalived_sync_interface: "{{ ansible_default_ipv4.interface }}"
 ha_keepalived_master_hostname: ha-master
 ha_keepalived_password: "changeme"
+ha_proxy:
+  stats:
+    enable: true
+    bind: "*"
+    port: 8404
+    stats:
+      - "uri /stats"
+      - "refresh 10s"
+      - "admin if TRUE"

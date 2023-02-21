@@ -2,24 +2,8 @@
 # tasks file for haproxy
 - name: "Setup HAProxy"
   ansible.builtin.import_tasks: install_haproxy.yaml
-  tags: install
-
-- name: "Push stats config"
-  ansible.builtin.template:
-    src: 00-stats.cfg.j2
-    dest: /etc/haproxy/conf.d/00-stats.cfg
-    owner: root
-    group: root
-    mode: "0644"
-  tags: config
-
-- name: "Start HAProxy"
-  ansible.builtin.service:
-    name: haproxy
-    state: started
-    enabled: true
-  tags: config
+  tags: haproxy
 
 - name: "Setup Keepalived"
   ansible.builtin.import_tasks: install_keepalived.yaml
-  tags: install
+  tags: keepalived
