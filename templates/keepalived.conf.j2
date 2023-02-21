@@ -1,0 +1,24 @@
+vrrp_script reload_haproxy {
+        script "killall -0 haproxy"
+        interval 1
+}
+
+vrrp_instance VI_1 {
+   virtual_router_id 100
+   state {% if inventory_hostname == ha_keepalived_master_hostname %}MASTER{% else %}BACKUP{% endif %}
+   
+   priority 100
+   advert_int 1
+   lvs_sync_daemon_interface {{ ha_keepalived_sync_interface }}
+   interface {{ ha_keepalived_interface }}
+   authentication {
+        auth_type PASS
+        auth_pass {{ ha_keepalived_password }}
+   }
+   virtual_ipaddress {
+        {{ ha_keepalived_vip }} brd {{ ha_keepalived_broadcast }} scope global
+   }
+   track_script { 
+       reload_haproxy 
+   }
+}

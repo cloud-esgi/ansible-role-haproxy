@@ -1,3 +1,9 @@
+- name: "Install HAProxy"
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+    update_cache: true
+
 - name: Create HAProxy config folder
   ansible.builtin.file:
     path: /etc/haproxy/conf.d/
@@ -5,17 +11,6 @@
     mode: "0755"
     owner: root
     group: root
-
-- name: "Install HAProxy"
-  ansible.builtin.apt:
-    name: haproxy
-    state: present
-    update_cache: true
-
-- name: "Stop HAProxy"
-  ansible.builtin.service:
-    name: haproxy
-    state: stopped
 
 - name: "Patch HAProxy service to load config in conf.d/ folder"
   ansible.builtin.lineinfile:
@@ -33,3 +28,4 @@
   when: haproxy_service_patched.changed
   register: systemd_reload
   changed_when: systemd_reload.rc != 0
+

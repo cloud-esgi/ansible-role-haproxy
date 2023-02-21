@@ -1,2 +1,8 @@
 ---
 # defaults file for haproxy
+ha_keepalived_vip: 255.255.255.255/32
+ha_keepalived_broadcast: 255.255.255.255
+ha_keepalived_interface: "{{ ansible_default_ipv4.interface }}"
+ha_keepalived_sync_interface: "{{ ansible_default_ipv4.interface }}"
+ha_keepalived_master_hostname: ha-master
+ha_keepalived_password: "changeme"

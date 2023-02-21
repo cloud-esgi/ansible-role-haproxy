@@ -1,8 +1,7 @@
 ---
 # tasks file for haproxy
-- name: "Import install"
-  ansible.builtin.import_tasks: install.yaml
-  notify: "Restart HAProxy"
+- name: "Setup HAProxy"
+  ansible.builtin.import_tasks: install_haproxy.yaml
   tags: install
 
 - name: "Push stats config"
@@ -12,5 +11,15 @@
     owner: root
     group: root
     mode: "0644"
-  notify: "Restart HAProxy"
   tags: config
+
+- name: "Start HAProxy"
+  ansible.builtin.service:
+    name: haproxy
+    state: started
+    enabled: true
+  tags: config
+
+- name: "Setup Keepalived"
+  ansible.builtin.import_tasks: install_keepalived.yaml
+  tags: install
